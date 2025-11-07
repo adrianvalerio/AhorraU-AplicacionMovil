@@ -1,3 +1,5 @@
+package com.example.ahorrau_aplicacionmovil.ui.pages
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -7,6 +9,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -21,8 +24,8 @@ fun CalculateView(
     onBackClick: () -> Unit
 ) {
     var currentStep by remember { mutableStateOf(1) }
-    var weeklyBudget by remember { mutableStateOf("120") }
-    var spendAmount by remember { mutableStateOf("") }
+    var weeklySpending by remember { mutableStateOf("") }
+    var savingGoal by remember { mutableStateOf("") }
 
     Column(
         modifier = Modifier
@@ -51,9 +54,9 @@ fun CalculateView(
             )
         }
 
-        // Título
+        // Título principal
         Text(
-            "Calcular mis gastos",
+            "Planifica tu ahorro",
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold,
             color = GrayDark,
@@ -62,7 +65,6 @@ fun CalculateView(
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        // Contenido según el paso
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -70,37 +72,11 @@ fun CalculateView(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            when (currentStep) {
-                1 -> {
-                    // Paso 1: Mostrar gasto semanal
-                    Card(
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(24.dp),
-                        colors = CardDefaults.cardColors(containerColor = White)
-                    ) {
-                        Column(
-                            modifier = Modifier.padding(32.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Text(
-                                "Tu gasto semanal",
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = GrayDark
-                            )
-                            Spacer(modifier = Modifier.height(16.dp))
-                            Text(
-                                "S/. $weeklyBudget",
-                                fontSize = 36.sp,
-                                fontWeight = FontWeight.Black,
-                                color = GrayDark
-                            )
-                        }
-                    }
-                }
 
-                2 -> {
-                    // Paso 2: Ingresar cuánto gastar
+            when (currentStep) {
+
+                // Paso 1: Usuario ingresa su gasto semanal actual
+                1 -> {
                     Card(
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(24.dp),
@@ -111,32 +87,20 @@ fun CalculateView(
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Text(
-                                "Tu gasto semanal",
-                                fontSize = 14.sp,
-                                color = GrayDark
-                            )
-                            Spacer(modifier = Modifier.height(8.dp))
-                            Text(
-                                "S/. $weeklyBudget",
-                                fontSize = 24.sp,
+                                "¿Cuánto gastas semanalmente?",
+                                fontSize = 18.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = GrayDark
+                                color = GrayDark,
+                                textAlign = TextAlign.Center
                             )
 
                             Spacer(modifier = Modifier.height(24.dp))
 
-                            Text(
-                                "Cuánto quieres gastar (S/.)",
-                                fontSize = 14.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = GrayDark
-                            )
-
-                            Spacer(modifier = Modifier.height(16.dp))
-
                             OutlinedTextField(
-                                value = spendAmount,
-                                onValueChange = { spendAmount = it },
+                                value = weeklySpending,
+                                onValueChange = { weeklySpending = it },
+                                placeholder = { Text("Ejemplo: 250") },
+                                label = { Text("Gasto semanal (S/.)") },
                                 modifier = Modifier.fillMaxWidth(),
                                 colors = TextFieldDefaults.colors(
                                     focusedContainerColor = White,
@@ -152,8 +116,53 @@ fun CalculateView(
                     }
                 }
 
+                // Paso 2: Usuario elige cuánto quiere ahorrar
+                2 -> {
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(24.dp),
+                        colors = CardDefaults.cardColors(containerColor = White)
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(32.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                "¿Cuánto quieres ahorrar esta semana?",
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = GrayDark,
+                                textAlign = TextAlign.Center
+                            )
+
+                            Spacer(modifier = Modifier.height(24.dp))
+
+                            OutlinedTextField(
+                                value = savingGoal,
+                                onValueChange = { savingGoal = it },
+                                placeholder = { Text("Ejemplo: 50") },
+                                label = { Text("Ahorro deseado (S/.)") },
+                                modifier = Modifier.fillMaxWidth(),
+                                colors = TextFieldDefaults.colors(
+                                    focusedContainerColor = White,
+                                    unfocusedContainerColor = White
+                                ),
+                                textStyle = LocalTextStyle.current.copy(
+                                    textAlign = TextAlign.Center,
+                                    fontSize = 24.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            )
+                        }
+                    }
+                }
+
+                // Paso 3: Resultado
                 3 -> {
-                    // Paso 3: Confirmación
+                    val availableToSpend = weeklySpending.toFloatOrNull()?.minus(
+                        savingGoal.toFloatOrNull() ?: 0f
+                    ) ?: 0f
+
                     Card(
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(24.dp),
@@ -164,16 +173,42 @@ fun CalculateView(
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Text(
-                                "¡Listo!",
-                                fontSize = 32.sp,
+                                "Tu resumen semanal",
+                                fontSize = 24.sp,
                                 fontWeight = FontWeight.Black,
+                                color = GrayDark
+                            )
+
+                            Spacer(modifier = Modifier.height(24.dp))
+
+                            Text(
+                                "Gasto semanal: S/. $weeklySpending",
+                                fontSize = 16.sp,
+                                color = GrayDark
+                            )
+                            Text(
+                                "Ahorro deseado: S/. $savingGoal",
+                                fontSize = 16.sp,
                                 color = GrayDark
                             )
 
                             Spacer(modifier = Modifier.height(16.dp))
 
                             Text(
-                                "Se te notificará un recordatorio cuando llegues al 80% de tu gasto total",
+                                "Podrás gastar hasta:",
+                                fontSize = 16.sp,
+                                color = GrayDark
+                            )
+                            Text(
+                                "S/. %.2f".format(availableToSpend),
+                                fontSize = 32.sp,
+                                fontWeight = FontWeight.Black,
+                                color = Color(0xFF4CAF50)
+                            )
+
+                            Spacer(modifier = Modifier.height(16.dp))
+                            Text(
+                                "¡Ahorra inteligentemente esta semana!",
                                 fontSize = 14.sp,
                                 textAlign = TextAlign.Center,
                                 color = GrayDark
@@ -185,10 +220,16 @@ fun CalculateView(
 
             Spacer(modifier = Modifier.height(40.dp))
 
-            // Botones
+            // Botones inferiores
             if (currentStep < 3) {
                 Button(
-                    onClick = { currentStep++ },
+                    onClick = {
+                        if ((currentStep == 1 && weeklySpending.isNotEmpty()) ||
+                            (currentStep == 2 && savingGoal.isNotEmpty())
+                        ) {
+                            currentStep++
+                        }
+                    },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(56.dp),
@@ -196,9 +237,10 @@ fun CalculateView(
                     shape = RoundedCornerShape(12.dp)
                 ) {
                     Text(
-                        "Confirmar",
+                        "Continuar",
                         fontWeight = FontWeight.Bold,
-                        fontSize = 16.sp
+                        fontSize = 16.sp,
+                        color = White
                     )
                 }
 
@@ -209,9 +251,7 @@ fun CalculateView(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(56.dp),
-                    colors = ButtonDefaults.outlinedButtonColors(
-                        contentColor = GrayDark
-                    ),
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = GrayDark),
                     shape = RoundedCornerShape(12.dp)
                 ) {
                     Text(
@@ -230,9 +270,10 @@ fun CalculateView(
                     shape = RoundedCornerShape(12.dp)
                 ) {
                     Text(
-                        "Volver al Inicio",
+                        "Volver al inicio",
                         fontWeight = FontWeight.Bold,
-                        fontSize = 16.sp
+                        fontSize = 16.sp,
+                        color = White
                     )
                 }
             }
@@ -240,8 +281,8 @@ fun CalculateView(
     }
 }
 
-@Preview (showBackground = true)
+@Preview(showBackground = true)
 @Composable
-fun CalculatePreview(){
+fun CalculatePreview() {
     CalculateView { }
 }
