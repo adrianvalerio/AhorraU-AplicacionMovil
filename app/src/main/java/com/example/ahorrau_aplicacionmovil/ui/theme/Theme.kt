@@ -1,52 +1,42 @@
 package com.example.ahorrau_aplicacionmovil.ui.theme
 
-import android.app.Activity
-import android.os.Build
-import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material3.*
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 
-// === ESQUEMAS DE COLOR ===
-private val LightColorScheme = lightColorScheme(
+private val LightColors = lightColorScheme(
     primary = YellowPrimary,
-    onPrimary = GrayDark,
+    onPrimary = White,
     secondary = PinkPrimary,
-    onSecondary = GrayDark,
-    tertiary = GreenSuccess,
-    background = White,
+    onSecondary = White,
+    background = YellowPrimary,
     onBackground = GrayDark,
-    surface = YellowLight,
-    onSurface = GrayDark,
-    error = RedError,
-    onError = White
+    surface = White,
+    onSurface = GrayDark
 )
 
-private val DarkColorScheme = darkColorScheme(
-    primary = YellowDark,
+private val DarkColors = darkColorScheme(
+    primary = YellowPrimary,
     onPrimary = White,
-    secondary = PinkDark,
+    secondary = PinkPrimary,
     onSecondary = White,
-    tertiary = GreenSuccess,
     background = GrayDark,
     onBackground = White,
-    surface = GrayMedium,
-    onSurface = White,
-    error = RedError,
-    onError = White
+    surface = GrayDark,
+    onSurface = White
 )
 
-// === FUNCIÓN PRINCIPAL DEL TEMA ===
 @Composable
 fun AhorraUTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
+    darkTheme: Boolean = false,
     content: @Composable () -> Unit
 ) {
-    val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
+    val colors = if (darkTheme) DarkColors else LightColors
 
     MaterialTheme(
-        colorScheme = colorScheme,
+        colorScheme = colors,
         typography = Typography,
         content = content
     )

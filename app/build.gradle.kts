@@ -55,6 +55,7 @@ android {
 
                 // Lifecycle (para recomposición correcta)
                 implementation("androidx.lifecycle:lifecycle-runtime-compose:2.8.6")
+                implementation(libs.ui.graphics)
 
                 // Test & Debug
                 testImplementation(libs.junit)
