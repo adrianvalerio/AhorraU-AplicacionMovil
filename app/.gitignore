@@ -1,0 +1,15 @@
+# Android
+.gradle/
+.idea/
+build/
+captures/
+local.properties
+
+# Logs
+*.log
+
+# Kotlin/Java
+*.class
+*.jar
+*.war
+*.ear
